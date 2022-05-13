@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+  <div data-ghibli></div>
+
+  <hr>
+
+  <div>
+    <span>Emoji aleatorio</span>
+    <div data-emoji></div>
+  </div>
+  
+  <hr>
+  
+  <div>
+    Valor do etherium
+    <div data-crypto></div>
+  </div>
+
+  <script>
+
+    const getGhibli = () => {
+      axios
+        .get("https://ghibliapi.herokuapp.com/films/58611129-2dbc-4a81-a72f-77ddfc1b1b49")
+        .then(response => {
+          const { data } = response
+
+          const image = document.createElement("img")
+          image.setAttribute("src", data.image)
+          image.style.width = "200px"
+          
+          const title = document.createElement("h1")
+          title.textContent = data.title
+
+          document.querySelector("[data-ghibli]").appendChild(title)
+          document.querySelector("[data-ghibli]").appendChild(image)
+        })
+        .catch(data => console.log(data))
+    }
+
+    const getEmoji = () => {
+      axios
+        .get("https://emojihub.herokuapp.com/api/random")
+        .then(response => {
+          const { data } = response
+
+          const emoji = document.createElement("span")
+
+          emoji.innerHTML = data.htmlCode[0]
+
+          document.querySelector("[data-emoji]").appendChild(emoji)
+        })
+        .catch(data => console.log(data))
+    }
+
+    const getCrypto = () => {
+      axios
+        .get("https://www.mercadobitcoin.net/api/ETH/ticker/")
+        .then(response => {
+          const { data: { ticker } } = response
+
+          const crypto = document.createElement("span")
+
+          var formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          });
+
+
+          crypto.innerHTML = `U${formatter.format(ticker.last)}`
+
+          document.querySelector("[data-crypto]").appendChild(crypto)
+        })
+        .catch(data => console.log(data))
+    }
+
+    getGhibli()
+    getEmoji()
+    getCrypto()
+  </script>
+</body>
+</html>
